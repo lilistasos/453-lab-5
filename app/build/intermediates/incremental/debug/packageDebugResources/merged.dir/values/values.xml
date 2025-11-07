@@ -7,6 +7,7 @@
     <string name="app_name">Inventory</string>
     <string name="attention">Attention</string>
     <string name="back_button">Back</string>
+    <string name="back_to_home">Back to Home</string>
     <string name="delete">Delete</string>
     <string name="delete_question">Are you sure you want to delete?</string>
     <string name="edit_item_title">Edit Item</string>

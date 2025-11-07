@@ -47,4 +47,5 @@
     <string name="product_not_found">Product not found</string>
     <string name="invalid_quantity">Invalid quantity</string>
     <string name="insufficient_stock">Insufficient stock. Available: %d</string>
+    <string name="back_to_home">Back to Home</string>
 </resources>

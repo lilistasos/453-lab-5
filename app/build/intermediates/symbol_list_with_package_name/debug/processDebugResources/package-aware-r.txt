@@ -199,6 +199,7 @@ string androidx_startup
 string app_name
 string attention
 string back_button
+string back_to_home
 string call_notification_answer_action
 string call_notification_answer_video_action
 string call_notification_decline_action

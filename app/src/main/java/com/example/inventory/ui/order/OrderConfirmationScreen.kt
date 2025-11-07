@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -64,6 +65,7 @@ object OrderConfirmationDestination : NavigationDestination {
 @Composable
 fun OrderConfirmationScreen(
     navigateBack: () -> Unit,
+    navigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: OrderConfirmationViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -81,6 +83,7 @@ fun OrderConfirmationScreen(
     ) { innerPadding ->
         OrderConfirmationBody(
             orderConfirmationUiState = uiState,
+            onNavigateToHome = navigateToHome,
             modifier = Modifier
                 .padding(
                     start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -95,6 +98,7 @@ fun OrderConfirmationScreen(
 @Composable
 private fun OrderConfirmationBody(
     orderConfirmationUiState: OrderConfirmationUiState,
+    onNavigateToHome: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -110,6 +114,15 @@ private fun OrderConfirmationBody(
                 remainingItems = orderConfirmationUiState.remainingItems,
                 modifier = Modifier.fillMaxWidth()
             )
+            
+            // Button to go back to homepage
+            Button(
+                onClick = onNavigateToHome,
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Text(stringResource(R.string.back_to_home))
+            }
         } else {
             Text(
                 text = stringResource(R.string.product_not_found),
@@ -202,12 +215,13 @@ private fun formatPrice(price: Double): String {
 fun OrderConfirmationScreenPreview() {
     InventoryTheme {
         OrderConfirmationBody(
-            OrderConfirmationUiState(
+            orderConfirmationUiState = OrderConfirmationUiState(
                 item = com.example.inventory.data.Item(1, "Game", 100.0, 20),
                 quantityOrdered = 5,
                 totalCost = 500.0,
                 remainingItems = 15
-            )
+            ),
+            onNavigateToHome = {}
         )
     }
 }

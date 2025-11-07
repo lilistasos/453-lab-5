@@ -113,7 +113,12 @@ fun InventoryNavHost(
             )
         ) {
             OrderConfirmationScreen(
-                navigateBack = { navController.navigateUp() }
+                navigateBack = { navController.navigateUp() },
+                navigateToHome = { 
+                    navController.navigate(HomeDestination.route) {
+                        popUpTo(HomeDestination.route) { inclusive = false }
+                    }
+                }
             )
         }
     }

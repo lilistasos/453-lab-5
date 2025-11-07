@@ -4,7 +4,7 @@
             "outputFile": "com.example.inventory.app-mergeDebugResources-53:/values-v21/values-v21.xml",
             "map": [
                 {
-                    "source": "/Users/tasos/.gradle/caches/8.11.1/transforms/d24b4a0166bd479ea188705ee45f7964/transformed/core-1.13.1/res/values-v21/values-v21.xml",
+                    "source": "/Users/tasos/.gradle/caches/8.13/transforms/3eaa3c4d41cdf336711a545e133cc44f/transformed/core-1.13.1/res/values-v21/values-v21.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,13",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4",

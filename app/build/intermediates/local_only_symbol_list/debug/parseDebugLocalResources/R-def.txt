@@ -11,6 +11,7 @@ mipmap ic_launcher_round
 string app_name
 string attention
 string back_button
+string back_to_home
 string delete
 string delete_question
 string edit_item_title

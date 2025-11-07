@@ -46,7 +46,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.AlertDialog
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
@@ -59,8 +58,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -93,15 +92,14 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val homeUiState by viewModel.homeUiState.collectAsState()
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier,
         topBar = {
             InventoryTopAppBar(
                 title = stringResource(HomeDestination.titleRes),
                 canNavigateBack = false,
-                scrollBehavior = scrollBehavior
+                scrollBehavior = null  // Fixed app bar - always visible
             )
         },
         floatingActionButton = {
@@ -135,7 +133,7 @@ fun HomeScreen(
                     }
                 }
             },
-            modifier = modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentPadding = innerPadding,
         )
     }
@@ -145,7 +143,7 @@ fun HomeScreen(
 private fun HomeBody(
     itemList: List<Item>,
     onItemClick: (Int) -> Unit,
-    onItemOrderClick: (Int) -> Unit,  // NEW: For ordering
+    onItemOrderClick: (Int) -> Unit,
     onSearch: (String, (Boolean) -> Unit) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -164,14 +162,14 @@ private fun HomeBody(
     }
     
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier,
+        modifier = modifier.fillMaxSize()
     ) {
-        // Search field
+        // Fixed search bar - always visible at top (outside scrollable area)
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
             label = { Text(stringResource(R.string.search_hint)) },
+            placeholder = { Text(stringResource(R.string.search_hint)) },
             leadingIcon = {
                 IconButton(onClick = { 
                     performSearch(searchQuery, onSearch) { showNotFoundDialog = true }
@@ -191,6 +189,7 @@ private fun HomeBody(
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(contentPadding)
                 .padding(
                     horizontal = dimensionResource(id = R.dimen.padding_small),
                     vertical = dimensionResource(id = R.dimen.padding_small)
@@ -206,20 +205,31 @@ private fun HomeBody(
             singleLine = true
         )
         
+        // Scrollable content below search bar
         if (itemList.isEmpty()) {
-            Text(
-                text = stringResource(R.string.no_item_description),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(contentPadding),
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.no_item_description),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(contentPadding),
+                )
+            }
         } else {
             InventoryList(
                 itemList = itemList,
                 onItemClick = { onItemClick(it.id) },
-                onItemOrderClick = { onItemOrderClick(it.id) },  // NEW: Allow ordering
+                onItemOrderClick = { onItemOrderClick(it.id) },
                 contentPadding = contentPadding,
-                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small))
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = dimensionResource(id = R.dimen.padding_small))
             )
         }
     }

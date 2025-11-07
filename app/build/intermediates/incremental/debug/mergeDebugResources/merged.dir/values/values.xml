@@ -107,6 +107,7 @@
     <string name="app_name">Inventory</string>
     <string name="attention">Attention</string>
     <string name="back_button">Back</string>
+    <string name="back_to_home">Back to Home</string>
     <string name="call_notification_answer_action">Answer</string>
     <string name="call_notification_answer_video_action">Video</string>
     <string name="call_notification_decline_action">Decline</string>
