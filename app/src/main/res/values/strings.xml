@@ -35,4 +35,16 @@
     <string name="sell">Sell</string>
     <string name="yes">Yes</string>
     <string name="required_fields">*required fields</string>
+    <string name="search">Search</string>
+    <string name="search_hint">Search by ID or name</string>
+    <string name="product_detail_title">Product Details</string>
+    <string name="quantity_to_order">Quantity to Order</string>
+    <string name="order">Order</string>
+    <string name="order_confirmation_title">Order Confirmation</string>
+    <string name="quantity_ordered">Quantity Ordered</string>
+    <string name="total_cost">Total Cost</string>
+    <string name="remaining_items">Remaining Items</string>
+    <string name="product_not_found">Product not found</string>
+    <string name="invalid_quantity">Invalid quantity</string>
+    <string name="insufficient_stock">Insufficient stock. Available: %d</string>
 </resources>

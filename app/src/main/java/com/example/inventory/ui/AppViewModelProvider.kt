@@ -27,6 +27,8 @@ import com.example.inventory.ui.home.HomeViewModel
 import com.example.inventory.ui.item.ItemDetailsViewModel
 import com.example.inventory.ui.item.ItemEditViewModel
 import com.example.inventory.ui.item.ItemEntryViewModel
+import com.example.inventory.ui.order.OrderConfirmationViewModel
+import com.example.inventory.ui.product.ProductDetailViewModel
 
 /**
  * Provides Factory to create instance of ViewModel for the entire Inventory app
@@ -56,6 +58,22 @@ object AppViewModelProvider {
         // Initializer for HomeViewModel
         initializer {
             HomeViewModel(inventoryApplication().container.itemsRepository)
+        }
+
+        // Initializer for ProductDetailViewModel
+        initializer {
+            ProductDetailViewModel(
+                this.createSavedStateHandle(),
+                inventoryApplication().container.itemsRepository
+            )
+        }
+
+        // Initializer for OrderConfirmationViewModel
+        initializer {
+            OrderConfirmationViewModel(
+                this.createSavedStateHandle(),
+                inventoryApplication().container.itemsRepository
+            )
         }
     }
 }

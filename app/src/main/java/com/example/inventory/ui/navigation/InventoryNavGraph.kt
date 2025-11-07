@@ -31,6 +31,10 @@ import com.example.inventory.ui.item.ItemEditDestination
 import com.example.inventory.ui.item.ItemEditScreen
 import com.example.inventory.ui.item.ItemEntryDestination
 import com.example.inventory.ui.item.ItemEntryScreen
+import com.example.inventory.ui.order.OrderConfirmationDestination
+import com.example.inventory.ui.order.OrderConfirmationScreen
+import com.example.inventory.ui.product.ProductDetailDestination
+import com.example.inventory.ui.product.ProductDetailScreen
 
 /**
  * Provides Navigation graph for the application.
@@ -50,6 +54,9 @@ fun InventoryNavHost(
                 navigateToItemEntry = { navController.navigate(ItemEntryDestination.route) },
                 navigateToItemUpdate = {
                     navController.navigate("${ItemDetailsDestination.route}/${it}")
+                },
+                navigateToProductDetail = {
+                    navController.navigate("${ProductDetailDestination.route}/${it}")
                 }
             )
         }
@@ -79,6 +86,34 @@ fun InventoryNavHost(
             ItemEditScreen(
                 navigateBack = { navController.popBackStack() },
                 onNavigateUp = { navController.navigateUp() }
+            )
+        }
+        composable(
+            route = ProductDetailDestination.routeWithArgs,
+            arguments = listOf(navArgument(ProductDetailDestination.itemIdArg) {
+                type = NavType.IntType
+            })
+        ) {
+            ProductDetailScreen(
+                navigateToOrderConfirmation = { itemId, quantity ->
+                    navController.navigate("${OrderConfirmationDestination.route}/${itemId}/${quantity}")
+                },
+                navigateBack = { navController.navigateUp() }
+            )
+        }
+        composable(
+            route = OrderConfirmationDestination.routeWithArgs,
+            arguments = listOf(
+                navArgument(OrderConfirmationDestination.itemIdArg) {
+                    type = NavType.IntType
+                },
+                navArgument(OrderConfirmationDestination.quantityArg) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            OrderConfirmationScreen(
+                navigateBack = { navController.navigateUp() }
             )
         }
     }

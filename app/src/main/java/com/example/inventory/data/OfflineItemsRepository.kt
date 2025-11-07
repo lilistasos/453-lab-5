@@ -28,4 +28,11 @@ class OfflineItemsRepository(private val itemDao: ItemDao) : ItemsRepository {
     override suspend fun deleteItem(item: Item) = itemDao.delete(item)
 
     override suspend fun updateItem(item: Item) = itemDao.update(item)
+
+    override suspend fun searchItemById(id: Int): Item? = itemDao.getItemById(id)
+
+    override suspend fun searchItemByName(name: String): Item? {
+        val searchPattern = "%$name%"
+        return itemDao.getItemByName(searchPattern)
+    }
 }

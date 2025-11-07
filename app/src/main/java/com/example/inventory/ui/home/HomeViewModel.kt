@@ -24,11 +24,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel to retrieve all items in the Room database.
  */
-class HomeViewModel(itemsRepository: ItemsRepository) : ViewModel() {
+class HomeViewModel(private val itemsRepository: ItemsRepository) : ViewModel() {
 
     /**
      * Holds home ui state. The list of items are retrieved from [ItemsRepository] and mapped to
@@ -41,6 +42,27 @@ class HomeViewModel(itemsRepository: ItemsRepository) : ViewModel() {
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
                 initialValue = HomeUiState()
             )
+
+    /**
+     * Search for an item by ID or name
+     */
+    fun searchItem(query: String, onResult: (Item?) -> Unit) {
+        viewModelScope.launch {
+            val trimmedQuery = query.trim()
+            val item = if (trimmedQuery.isBlank()) {
+                null
+            } else {
+                // Try to parse as ID first
+                val id = trimmedQuery.toIntOrNull()
+                if (id != null) {
+                    itemsRepository.searchItemById(id)
+                } else {
+                    itemsRepository.searchItemByName(trimmedQuery)
+                }
+            }
+            onResult(item)
+        }
+    }
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L

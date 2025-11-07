@@ -46,4 +46,14 @@ interface ItemsRepository {
      * Update item in the data source
      */
     suspend fun updateItem(item: Item)
+
+    /**
+     * Search for an item by ID
+     */
+    suspend fun searchItemById(id: Int): Item?
+
+    /**
+     * Search for an item by name
+     */
+    suspend fun searchItemByName(name: String): Item?
 }
