@@ -150,7 +150,11 @@ private fun HomeBody(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var showNotFoundDialog by remember { mutableStateOf(false) }
-    
+
+    val horizontalPadding = dimensionResource(id = R.dimen.padding_small)
+    val verticalSpacing = dimensionResource(id = R.dimen.padding_small)
+    val listContentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding() + verticalSpacing)
+
     fun performSearch(query: String, searchFn: (String, (Boolean) -> Unit) -> Unit, onNotFound: () -> Unit) {
         if (query.isNotBlank()) {
             searchFn(query) { found ->
@@ -160,9 +164,11 @@ private fun HomeBody(
             }
         }
     }
-    
+
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .padding(contentPadding)
     ) {
         // Fixed search bar - always visible at top (outside scrollable area)
         OutlinedTextField(
@@ -171,7 +177,7 @@ private fun HomeBody(
             label = { Text(stringResource(R.string.search_hint)) },
             placeholder = { Text(stringResource(R.string.search_hint)) },
             leadingIcon = {
-                IconButton(onClick = { 
+                IconButton(onClick = {
                     performSearch(searchQuery, onSearch) { showNotFoundDialog = true }
                 }) {
                     Icon(
@@ -189,11 +195,8 @@ private fun HomeBody(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(contentPadding)
-                .padding(
-                    horizontal = dimensionResource(id = R.dimen.padding_small),
-                    vertical = dimensionResource(id = R.dimen.padding_small)
-                )
+                .padding(horizontal = horizontalPadding)
+                .padding(top = verticalSpacing / 2)
                 .onKeyEvent { keyEvent ->
                     if (keyEvent.key == Key.Enter && searchQuery.isNotBlank()) {
                         performSearch(searchQuery, onSearch) { showNotFoundDialog = true }
@@ -204,13 +207,14 @@ private fun HomeBody(
                 },
             singleLine = true
         )
-        
+
         // Scrollable content below search bar
         if (itemList.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .weight(1f)
+                    .padding(horizontal = horizontalPadding),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -218,7 +222,7 @@ private fun HomeBody(
                     text = stringResource(R.string.no_item_description),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(contentPadding),
+                    modifier = Modifier.padding(vertical = verticalSpacing)
                 )
             }
         } else {
@@ -226,14 +230,14 @@ private fun HomeBody(
                 itemList = itemList,
                 onItemClick = { onItemClick(it.id) },
                 onItemOrderClick = { onItemOrderClick(it.id) },
-                contentPadding = contentPadding,
+                contentPadding = listContentPadding,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = dimensionResource(id = R.dimen.padding_small))
+                    .padding(horizontal = horizontalPadding)
             )
         }
     }
-    
+
     if (showNotFoundDialog) {
         AlertDialog(
             onDismissRequest = { showNotFoundDialog = false },

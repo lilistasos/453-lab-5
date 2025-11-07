@@ -114,9 +114,10 @@ fun InventoryNavHost(
         ) {
             OrderConfirmationScreen(
                 navigateBack = { navController.navigateUp() },
-                navigateToHome = { 
-                    navController.navigate(HomeDestination.route) {
-                        popUpTo(HomeDestination.route) { inclusive = false }
+                navigateToHome = {
+                    val popped = navController.popBackStack(HomeDestination.route, inclusive = false)
+                    if (!popped) {
+                        navController.navigate(HomeDestination.route)
                     }
                 }
             )
