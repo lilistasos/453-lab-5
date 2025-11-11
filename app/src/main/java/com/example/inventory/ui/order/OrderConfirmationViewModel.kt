@@ -21,8 +21,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventory.data.Item
 import com.example.inventory.data.ItemsRepository
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -38,6 +40,7 @@ class OrderConfirmationViewModel(
 
     private val itemId: Int = checkNotNull(savedStateHandle[OrderConfirmationDestination.itemIdArg])
     private val quantityOrdered: Int = checkNotNull(savedStateHandle[OrderConfirmationDestination.quantityArg])
+    private val _remainingItems = MutableStateFlow(0)
 
     init {
         // Update the item quantity in the database when ViewModel is created
@@ -46,29 +49,34 @@ class OrderConfirmationViewModel(
             
             if (item != null && item.quantity >= quantityOrdered) {
                 val remainingItems = item.quantity - quantityOrdered
+                _remainingItems.value = remainingItems
                 itemsRepository.updateItem(item.copy(quantity = remainingItems))
+            } else if (item != null) {
+                _remainingItems.value = item.quantity.coerceAtLeast(0)
+            } else {
+                _remainingItems.value = 0
             }
         }
     }
 
     val uiState: StateFlow<OrderConfirmationUiState> =
-        itemsRepository.getItemStream(itemId)
-            .map { item ->
-                if (item != null) {
-                    val totalCost = item.price * quantityOrdered
-                    // Calculate remaining items (accounting for the order that was just placed)
-                    val remainingItems = item.quantity - quantityOrdered
-                    
-                    OrderConfirmationUiState(
-                        item = item,
-                        quantityOrdered = quantityOrdered,
-                        totalCost = totalCost,
-                        remainingItems = maxOf(0, remainingItems)
-                    )
-                } else {
-                    OrderConfirmationUiState()
-                }
+        combine(
+            itemsRepository.getItemStream(itemId),
+            _remainingItems
+        ) { item, remainingItems ->
+            if (item != null) {
+                val totalCost = item.price * quantityOrdered
+
+                OrderConfirmationUiState(
+                    item = item,
+                    quantityOrdered = quantityOrdered,
+                    totalCost = totalCost,
+                    remainingItems = maxOf(0, remainingItems)
+                )
+            } else {
+                OrderConfirmationUiState()
             }
+        }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000L),
